@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebHost Pro - Client-Side Hosting Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+</head>
+<body>
+    <!-- Main Hosting Dashboard -->
+    <div id="hosting-dashboard">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div>
+                            <h1>WebHost Pro</h1>
+                            <div class="tagline">Client-Side Hosting Platform • No Backend • Unlimited Usage</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs" id="tabs">
+                        <div class="tab active" data-tab="website-hosting">
+                            <i class="fas fa-code"></i> Website Hosting
+                        </div>
+                        <div class="tab" data-tab="article-hosting">
+                            <i class="fas fa-newspaper"></i> Articles
+                        </div>
+                        <div class="tab" data-tab="media-hosting">
+                            <i class="fas fa-photo-video"></i> Media Hosting
+                        </div>
+                        <div class="tab" data-tab="apk-hosting">
+                            <i class="fas fa-mobile-alt"></i> APK & ZIP
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Website Hosting Section -->
+            <div class="tab-content active" id="website-hosting">
+                <div class="card">
+                    <h2><i class="fas fa-code"></i> Website Hosting</h2>
+                    <p>Upload HTML, CSS, and JS files to create a live website project. All files are stored locally and can be shared via public links.</p>
+                    
+                    <div class="feature-highlight">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Generates real working public URLs</span>
+                    </div>
+                    <div class="feature-highlight">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Links work in new tabs/devices</span>
+                    </div>
+                    <div class="feature-highlight">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Persists after browser restart</span>
+                    </div>
+                    
+                    <div class="upload-area" id="website-upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Upload Website Files</h3>
+                        <p>Drag & drop your HTML, CSS, and JS files here or click to browse</p>
+                        <button class="btn btn-primary" id="website-upload-btn">
+                            <i class="fas fa-folder-open"></i> Select Files
+                        </button>
+                        <input type="file" class="file-input" id="website-files" multiple accept=".html,.css,.js,.txt">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-name">Project Name (for URL)</label>
+                        <input type="text" id="project-name" class="form-control" placeholder="my-awesome-website" required>
+                        <small class="form-text">This will be used in the public URL: yoursite.com/<strong>project-name</strong></small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="website-title">Website Title</label>
+                        <input type="text" id="website-title" class="form-control" placeholder="My Awesome Website">
+                    </div>
+                    
+                    <button class="btn btn-success" id="create-project">
+                        <i class="fas fa-plus-circle"></i> Create & Generate Public Link
+                    </button>
+                    
+                    <div id="website-project-list" class="file-list">
+                        <!-- Website projects will be listed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Article Hosting Section -->
+            <div class="tab-content" id="article-hosting">
+                <div class="card">
+                    <h2><i class="fas fa-newspaper"></i> Article Hosting</h2>
+                    <p>Create and publish articles with images. Each article gets a unique public link that can be shared.</p>
+                    
+                    <div class="form-group">
+                        <label for="article-title">Article Title</label>
+                        <input type="text" id="article-title" class="form-control" placeholder="Enter a catchy title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-slug">Article URL Slug</label>
+                        <input type="text" id="article-slug" class="form-control" placeholder="my-awesome-article">
+                        <small class="form-text">This will be used in the public URL: yoursite.com/article/<strong>slug</strong></small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="article-content">Article Content</label>
+                        <textarea id="article-content" class="form-control textarea-control" placeholder="Write your article content here..." rows="10" required></textarea>
+                    </div>
+                    
+                    <div class="upload-area" id="article-upload-area">
+                        <i class="fas fa-image"></i>
+                        <h3>Upload Article Image (Optional)</h3>
+                        <p>Drag & drop an image or click to browse</p>
+                        <button class="btn btn-primary" id="article-image-btn">
+                            <i class="fas fa-image"></i> Select Image
+                        </button>
+                        <input type="file" class="file-input" id="article-image" accept="image/*">
+                    </div>
+                    
+                    <button class="btn btn-success" id="publish-article">
+                        <i class="fas fa-paper-plane"></i> Publish Article & Generate Link
+                    </button>
+                    
+                    <div id="articles-list" class="articles-grid">
+                        <!-- Articles will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Media Hosting Section -->
+            <div class="tab-content" id="media-hosting">
+                <div class="card">
+                    <h2><i class="fas fa-photo-video"></i> Media Hosting</h2>
+                    <p>Upload images and videos. Each file gets a direct public link that displays or downloads the file instantly.</p>
+                    
+                    <div class="upload-area" id="media-upload-area">
+                        <i class="fas fa-photo-video"></i>
+                        <h3>Upload Media Files</h3>
+                        <p>Drag & drop images or videos here or click to browse</p>
+                        <button class="btn btn-primary" id="media-upload-btn">
+                            <i class="fas fa-folder-open"></i> Select Files
+                        </button>
+                        <input type="file" class="file-input" id="media-files" multiple accept="image/*,video/*">
+                    </div>
+                    
+                    <div id="media-file-list" class="file-list">
+                        <!-- Media files will be listed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- APK & ZIP Hosting Section -->
+            <div class="tab-content" id="apk-hosting">
+                <div class="card">
+                    <h2><i class="fas fa-mobile-alt"></i> APK & ZIP Hosting</h2>
+                    <p>Upload APK or ZIP files for instant sharing. Each file gets a direct download link.</p>
+                    
+                    <div class="upload-area" id="apk-upload-area">
+                        <i class="fas fa-file-archive"></i>
+                        <h3>Upload APK or ZIP Files</h3>
+                        <p>Drag & drop APK or ZIP files here or click to browse</p>
+                        <button class="btn btn-primary" id="apk-upload-btn">
+                            <i class="fas fa-folder-open"></i> Select Files
+                        </button>
+                        <input type="file" class="file-input" id="apk-files" multiple accept=".apk,.zip,.rar,.7z,.tar.gz">
+                    </div>
+                    
+                    <div id="apk-file-list" class="file-list">
+                        <!-- APK/ZIP files will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Content Display Area (hidden by default) -->
+    <div id="content-display" style="display: none;">
+        <!-- This area will show hosted websites, articles, or media files -->
+    </div>
+    
+    <!-- Notification Element -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">Operation completed successfully!</span>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p><strong>WebHost Pro</strong> - A fully client-side hosting platform</p>
+            <p>All data is stored locally in your browser • No backend • No API • Unlimited usage</p>
+            <p>Works offline • Persists after refresh • Compatible with incognito mode</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
