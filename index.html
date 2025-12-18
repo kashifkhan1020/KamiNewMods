@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyHost - Static Web Hosting</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-cloud-upload-alt"></i> MyHost</h1>
+            <p class="tagline">Upload & host HTML, CSS, JS files instantly. No backend, no limits.</p>
+            <p class="note">Made by KamixHacker | Admin Pass: <code>KAMIXHACKER</code></p>
+        </header>
+
+        <main>
+            <!-- File Upload Section -->
+            <section class="upload-section">
+                <h2><i class="fas fa-upload"></i> Upload Your Project</h2>
+                <div class="upload-box">
+                    <!-- THE FIX: 'multiple' attribute added here -->
+                    <input type="file" id="fileInput" multiple accept=".html,.css,.js,.png,.jpg,.jpeg,.gif,.svg">
+                    <label for="fileInput" class="upload-label">
+                        <i class="fas fa-folder-open"></i> Choose Files (HTML, CSS, JS, Images)
+                    </label>
+                    <p class="hint">Hold Ctrl/Cmd to select multiple files. No ZIP needed.</p>
+                    
+                    <div id="fileList" class="file-list"></div>
+                    
+                    <button id="uploadBtn" class="upload-btn">
+                        <i class="fas fa-rocket"></i> Generate Hosted Link
+                    </button>
+                </div>
+            </section>
+
+            <!-- Generated Links Section -->
+            <section class="links-section">
+                <h2><i class="fas fa-link"></i> Your Hosted Links</h2>
+                <div id="linksContainer" class="links-container">
+                    <p class="empty-state">No projects hosted yet. Upload files to generate links.</p>
+                </div>
+            </section>
+
+            <!-- Admin Panel (Hidden by default) -->
+            <section id="adminPanel" class="admin-panel" style="display:none;">
+                <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+                <div class="admin-box">
+                    <p><strong>Total Projects:</strong> <span id="projectCount">0</span></p>
+                    <p><strong>Total Files:</strong> <span id="totalFiles">0</span></p>
+                    <button id="clearAllBtn" class="delete-btn">
+                        <i class="fas fa-trash-alt"></i> Clear All Projects
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Admin Access Button -->
+        <div class="admin-access">
+            <button id="adminAccessBtn"><i class="fas fa-key"></i> Admin Access</button>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-lock"></i> Admin Authentication</h3>
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <button id="submitPassword">Submit</button>
+            <p id="passwordError" class="error"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
