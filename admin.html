@@ -1,0 +1,3113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kami Admin Pro - Complete Control Panel</title>
+
+    <!-- FONTS & ICONS -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <!-- LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --secondary: #db2777;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --sidebar-width: 280px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; }
+
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: 0; opacity: 0.3; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card-bg);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            border-right: 1px solid #334155;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .brand-logo span { color: var(--secondary); }
+
+        .nav-item {
+            padding: 15px 20px;
+            margin-bottom: 5px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(90deg, var(--primary), transparent);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .badge {
+            position: absolute;
+            right: 15px;
+            background: var(--danger);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            width: calc(100% - var(--sidebar-width));
+            position: relative;
+            z-index: 1;
+        }
+
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .stat-card h3 { font-size: 2.2rem; margin-bottom: 5px; }
+        
+        /* TABLES */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .custom-table th, .custom-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .custom-table th { background: #162032; color: var(--primary); }
+        
+        /* FORMS */
+        input, select, textarea {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        /* BUTTONS */
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; margin-right: 5px; }
+
+        .badge-success { background: var(--success); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; }
+        .badge-danger { background: var(--danger); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; }
+        .badge-primary { background: var(--primary); color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        /* CHAT INTERFACE */
+        .chat-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-users {
+            width: 250px;
+            background: #0f172a;
+            border-right: 1px solid #334155;
+            overflow-y: auto;
+        }
+
+        .chat-user-item {
+            padding: 15px;
+            border-bottom: 1px solid #334155;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-user-item:hover {
+            background: #1e293b;
+        }
+
+        .chat-user-item.active {
+            background: var(--primary);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #0f172a;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 70%;
+        }
+
+        .message.sent {
+            margin-left: auto;
+            background: var(--primary);
+            border-radius: 15px 15px 0 15px;
+            padding: 10px;
+        }
+
+        .message.received {
+            background: #2d3748;
+            border-radius: 15px 15px 15px 0;
+            padding: 10px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid #334155;
+        }
+
+        /* FILE UPLOAD AREA */
+        .file-upload-area {
+            background: #0f172a;
+            border: 2px dashed var(--primary);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-area:hover {
+            background: #1a2340;
+            border-color: var(--secondary);
+        }
+
+        .file-upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* SCREENSHOT GRID */
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .screenshot-item {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .screenshot-preview {
+            width: 100%;
+            height: 150px;
+            background: #1e293b;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* TOGGLE SWITCH */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #334155;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Social Links Specific */
+        .social-input-group {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid;
+            transition: 0.3s;
+        }
+
+        .social-input-group:hover {
+            transform: translateX(5px);
+        }
+
+        .social-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .social-preview-item {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .social-preview-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* MOBILE */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background: var(--primary);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        @media(max-width: 768px) {
+            .sidebar { transform: translateX(-100%); position: fixed; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; width: 100%; }
+            .mobile-menu-btn { display: flex; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .screenshot-grid { grid-template-columns: 1fr; }
+        }
+
+        /* NEW FEATURES STYLES */
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        .color-option.active {
+            border-color: white;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .font-preview {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .recycle-item {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .recycle-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        .ip-item {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid var(--danger);
+        }
+
+        .notification-preview {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid var(--primary);
+        }
+
+        .ip-normal {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .ip-banned {
+            color: #ef4444;
+            font-weight: 600;
+            text-decoration: line-through;
+        }
+
+        .user-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .user-detail-item {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .user-detail-label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .user-detail-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+       /* Verification Links Styles */
+          .verification-stats {
+           display: grid;
+           grid-template-columns: repeat(3, 1fr);
+           gap: 15px;
+           margin-top: 20px;
+        }
+
+          .stat-box {
+           background: #0f172a;
+           padding: 20px;
+           border-radius: 12px;
+           text-align: center;
+       }
+
+         .stat-box h3 {
+          font-size: 2rem;
+          margin-bottom: 5px;
+      }
+
+         .stat-box p {
+          color: var(--text-muted);
+          font-size: 0.9rem;
+      }  
+    </style>
+</head>
+<body>
+
+<!-- Particles Background -->
+<div id="particles-js"></div>
+
+<!-- Mobile Menu Button -->
+<div class="mobile-menu-btn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</div>
+
+<!-- SIDEBAR - ALL SECTIONS -->
+<div class="sidebar" id="sidebar">
+    <div class="brand-logo">KAMI <span>ADMIN</span></div>
+    
+    <div class="nav-item active" onclick="changeSection('dashboard')">
+        <i class="fas fa-th-large"></i> Dashboard
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('upload')">
+        <i class="fas fa-cloud-upload-alt"></i> Upload App
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('apps')">
+        <i class="fas fa-gamepad"></i> App Manager
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('users')">
+        <i class="fas fa-users"></i> User Manager
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('pending')">
+        <i class="fas fa-clock"></i> Pending Approvals
+        <span class="badge" id="pendingBadge">0</span>
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('payments')">
+        <i class="fas fa-credit-card"></i> Payments
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('reviews')">
+        <i class="fas fa-star"></i> Reviews
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('chat')">
+        <i class="fas fa-headset"></i> Support Chat
+        <span class="badge" id="chatBadge">0</span>
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('categories')">
+        <i class="fas fa-tags"></i> Categories
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('ads')">
+        <i class="fas fa-ad"></i> Ads Manager
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('social')">
+        <i class="fas fa-share-alt"></i> Social Links
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('settings')">
+        <i class="fas fa-cogs"></i> Settings
+    </div>
+  
+    <div class="nav-item" onclick="changeSection('verification')">
+        <i class="fas fa-link"></i> Verification Links
+    </div>
+  
+    <div class="nav-item" onclick="changeSection('customize')">
+        <i class="fas fa-palette"></i> Customize Theme
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('appupdates')">
+        <i class="fas fa-sync-alt"></i> App Updates
+        <span class="badge" id="updateBadge">0</span>
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('recyclebin')">
+        <i class="fas fa-trash-restore"></i> Recycle Bin
+        <span class="badge" id="recycleBadge">0</span>
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('pushnotify')">
+        <i class="fas fa-bell"></i> Push Notifications
+    </div>
+    
+    <div class="nav-item" onclick="changeSection('ipban')">
+        <i class="fas fa-ban"></i> IP Ban System
+        <span class="badge" id="ipBanBadge">0</span>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+    <!-- ===== DASHBOARD SECTION ===== -->
+    <div id="dashboard" class="section active">
+        <h2>Dashboard Overview</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="totalUsers">0</h3>
+                <p>Total Users</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalApps">0</h3>
+                <p>Total Apps</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalDownloads">0</h3>
+                <p>Total Downloads</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalRevenue">0 PKR</h3>
+                <p>Total Revenue</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="onlineUsers">0</h3>
+                <p>Online Now</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="pendingPayments">0</h3>
+                <p>Pending Payments</p>
+            </div>
+            <!-- FIXED: Added missing stat cards -->
+            <div class="stat-card">
+                <h3 id="verifiedUsers">0</h3>
+                <p>Verified Users</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="bannedUsers">0</h3>
+                <p>Banned Users</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="premiumUsers">0</h3>
+                <p>Premium Users</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="newUsers">0</h3>
+                <p>New Today</p>
+            </div>
+        </div>
+        
+        <div style="background: var(--card-bg); padding: 20px; border-radius: 15px;">
+            <canvas id="dashboardChart"></canvas>
+        </div>
+    </div>
+
+    <!-- ===== UPLOAD APP SECTION ===== -->
+    <div id="upload" class="section">
+        <h2 style="margin-bottom: 25px;">Upload New App</h2>
+        
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            
+            <!-- App Name -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-heading" style="margin-right: 8px; color: var(--primary);"></i>App Name
+                </label>
+                <input type="text" id="appName" class="form-control" placeholder="Enter app name" style="background: #0f172a;" required>
+            </div>
+            
+            <!-- App Icon Upload -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-image" style="margin-right: 8px; color: var(--primary);"></i>App Icon
+                </label>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div style="width: 80px; height: 80px; background: #0f172a; border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--primary); overflow: hidden;">
+                        <img id="iconPreview" src="#" style="width: 100%; height: 100%; object-fit: cover; border-radius: 14px; display: none;">
+                        <i class="fas fa-plus" id="iconPlaceholder" style="color: var(--text-muted); font-size: 1.5rem;"></i>
+                    </div>
+                    <input type="file" id="iconFile" accept="image/*" onchange="previewIcon(this)" style="flex: 1; background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: var(--text-muted);">
+                </div>
+            </div>
+            
+            <!-- App Version -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-code-branch" style="margin-right: 8px; color: var(--primary);"></i>App Version
+                </label>
+                <input type="text" id="appVersion" class="form-control" placeholder="e.g., 1.0.0" style="background: #0f172a;" required>
+            </div>
+            
+            <!-- App Description -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-align-left" style="margin-right: 8px; color: var(--primary);"></i>App Description
+                </label>
+                <textarea id="appDescription" class="form-control" placeholder="Write detailed app description..." rows="5" style="background: #0f172a;" required></textarea>
+            </div>
+            
+            <!-- App Download Link -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-link" style="margin-right: 8px; color: var(--primary);"></i>App Download Link
+                </label>
+                <input type="url" id="appDownloadLink" class="form-control" placeholder="https://example.com/app.apk" style="background: #0f172a;" required>
+                <small style="color: var(--text-muted);">Direct download link for the app (Google Drive, MediaFire, etc.)</small>
+            </div>
+            
+            <!-- 3 Screenshots -->
+            <div style="margin-bottom: 30px;">
+                <label style="display: block; margin-bottom: 15px; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-images" style="margin-right: 8px; color: var(--primary);"></i>3 Demo Screenshots
+                </label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <!-- Screenshot 1 -->
+                    <div style="background: #0f172a; border-radius: 12px; padding: 15px; border: 1px solid #334155;">
+                        <div id="screenshotPreview1" style="width: 100%; height: 150px; background: #1e293b; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <i class="fas fa-camera" style="color: var(--text-muted); font-size: 2rem;"></i>
+                        </div>
+                        <input type="file" accept="image/*" onchange="previewScreenshot(this, 1)" style="width: 100%; background: #0f172a; border: 1px solid #334155; padding: 8px; border-radius: 6px; color: var(--text-muted);">
+                    </div>
+                    
+                    <!-- Screenshot 2 -->
+                    <div style="background: #0f172a; border-radius: 12px; padding: 15px; border: 1px solid #334155;">
+                        <div id="screenshotPreview2" style="width: 100%; height: 150px; background: #1e293b; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <i class="fas fa-camera" style="color: var(--text-muted); font-size: 2rem;"></i>
+                        </div>
+                        <input type="file" accept="image/*" onchange="previewScreenshot(this, 2)" style="width: 100%; background: #0f172a; border: 1px solid #334155; padding: 8px; border-radius: 6px; color: var(--text-muted);">
+                    </div>
+                    
+                    <!-- Screenshot 3 -->
+                    <div style="background: #0f172a; border-radius: 12px; padding: 15px; border: 1px solid #334155;">
+                        <div id="screenshotPreview3" style="width: 100%; height: 150px; background: #1e293b; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <i class="fas fa-camera" style="color: var(--text-muted); font-size: 2rem;"></i>
+                        </div>
+                        <input type="file" accept="image/*" onchange="previewScreenshot(this, 3)" style="width: 100%; background: #0f172a; border: 1px solid #334155; padding: 8px; border-radius: 6px; color: var(--text-muted);">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Category -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-tag" style="margin-right: 8px; color: var(--primary);"></i>Select Category
+                </label>
+                <select id="appCategory" class="form-control" style="background: #0f172a;" required>
+                    <option value="">-- Select Category --</option>
+                </select>
+            </div>
+            
+            <!-- Free/Paid Toggle -->
+            <div style="margin-bottom: 20px; background: #0f172a; padding: 20px; border-radius: 12px;">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <span style="font-weight: 600; color: var(--success);">💰 Free App</span>
+                    <label class="switch">
+                        <input type="checkbox" id="isPaid" onchange="togglePriceFields()">
+                        <span class="slider"></span>
+                    </label>
+                    <span style="font-weight: 600; color: var(--warning);">💎 Paid App</span>
+                </div>
+                
+                <!-- Paid App Fields -->
+                <div id="priceFields" style="display: none;">
+                    <div style="background: #1a1f35; padding: 20px; border-radius: 12px; border-left: 4px solid var(--warning);">
+                        <h4 style="color: var(--warning); margin-bottom: 15px;">💎 Paid App Settings</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; color: var(--text-muted);">🔑 App Key / Password</label>
+                            <input type="text" id="appKey" class="form-control" placeholder="e.g., PRO2024" style="background: #0f172a;">
+                            <small style="color: var(--text-muted);">User is key enter karega app unlock karne ke liye</small>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; color: var(--text-muted);">💰 Price (PKR)</label>
+                            <input type="number" id="appPrice" class="form-control" placeholder="e.g., 500" style="background: #0f172a;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; color: var(--text-muted);">📱 Admin WhatsApp Number</label>
+                            <input type="text" id="adminWhatsapp" class="form-control" placeholder="e.g., 923001234567" style="background: #0f172a;">
+                            <small style="color: var(--text-muted);">User ko yahan WhatsApp karna hoga key lene ke liye</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upload Button -->
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="uploadApp()" style="padding: 15px 30px; font-size: 1.1rem; flex: 1;">
+                    <i class="fas fa-cloud-upload-alt" style="margin-right: 10px;"></i>Upload App
+                </button>
+                <button class="btn btn-warning" onclick="resetForm()" style="padding: 15px 30px;">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== APP MANAGER SECTION ===== -->
+    <div id="apps" class="section">
+        <h2>App Manager</h2>
+        <input type="text" id="searchApps" placeholder="Search apps..." class="form-control" style="max-width: 300px;">
+        
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Icon</th>
+                        <th>App Name</th>
+                        <th>Category</th>
+                        <th>Version</th>
+                        <th>Downloads</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="appsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== USER MANAGER SECTION ===== -->
+    <div id="users" class="section">
+        <h2 style="margin-bottom: 25px;">User Manager</h2>
+        
+        <div class="stats-grid" style="grid-template-columns: repeat(5,1fr);">
+            <div class="stat-card"><h3 id="totalUsersStats">0</h3><p>Total Users</p></div>
+            <div class="stat-card"><h3 id="verifiedUsersStats">0</h3><p>Verified</p></div>
+            <div class="stat-card"><h3 id="bannedUsersStats">0</h3><p>Banned</p></div>
+            <div class="stat-card"><h3 id="onlineNowStats">0</h3><p>Online Now</p></div>
+            <div class="stat-card"><h3 id="uniqueCountriesStats">0</h3><p>Countries</p></div>
+        </div>
+        
+        <!-- Search and Filter -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="searchUser" class="form-control" placeholder="Search by name, email or IP..." style="flex: 2;">
+            <select id="countryFilter" class="form-control" style="flex: 1;">
+                <option value="">All Countries</option>
+            </select>
+            <button class="btn btn-primary" onclick="filterUsers()">Filter</button>
+        </div>
+        
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Contact</th>
+                        <th>🌐 IP Address</th>
+                        <th>📍 Location</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="userDetailsModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>👤 User Details</h3>
+                <span class="modal-close" onclick="closeModal('userDetailsModal')">&times;</span>
+            </div>
+            <div id="userDetailsContent"></div>
+        </div>
+    </div>
+
+    <!-- ===== PENDING APPROVALS SECTION ===== -->
+    <div id="pending" class="section">
+        <h2>Pending Approvals</h2>
+        <div id="pendingList"></div>
+    </div>
+
+    <!-- ===== PAYMENTS SECTION ===== -->
+    <div id="payments" class="section">
+        <h2>Payment History</h2>
+        <div id="paymentsList"></div>
+    </div>
+
+    <!-- ===== REVIEWS SECTION ===== -->
+    <div id="reviews" class="section">
+        <h2>User Reviews</h2>
+        <div id="reviewsList"></div>
+    </div>
+
+    <!-- ===== SUPPORT CHAT SECTION ===== -->
+    <div id="chat" class="section">
+        <h2>Support Chat</h2>
+        
+        <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px; height: 600px;">
+            <div style="background: var(--card-bg); border-radius: 15px; overflow-y: auto;">
+                <div style="padding: 15px; border-bottom: 1px solid #334155;">
+                    <h4>Active Users</h4>
+                </div>
+                <div id="chatUsersList"></div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-header" id="chatHeader">
+                    <img src="https://via.placeholder.com/40" style="width: 40px; height: 40px; border-radius: 50%;">
+                    <div>
+                        <h4 id="currentChatUser">Select a user</h4>
+                        <small id="userStatus">Offline</small>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages"></div>
+                
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="Type your message..." style="flex: 1; margin: 0;">
+                    <button class="btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CATEGORIES SECTION ===== -->
+    <div id="categories" class="section">
+        <h2>Categories</h2>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="newCategory" placeholder="New Category" style="flex: 1;">
+            <button class="btn-success" onclick="addCategory()">Add</button>
+        </div>
+        
+        <div id="categoriesList"></div>
+    </div>
+
+    <!-- ===== ADS MANAGER SECTION ===== -->
+    <div id="ads" class="section">
+        <h2>Ads Manager</h2>
+        
+        <div style="background: var(--card-bg); padding: 20px; border-radius: 15px;">
+            <select id="adStatus" class="form-control">
+                <option value="on">Ads ENABLED</option>
+                <option value="off">Ads DISABLED</option>
+            </select>
+            
+            <textarea id="adCode" placeholder="Adsterra Ad Code" rows="5" class="form-control"></textarea>
+            
+            <button class="btn-primary" onclick="saveAds()">Save Settings</button>
+        </div>
+    </div>
+
+    <!-- ===== SOCIAL LINKS MANAGER SECTION ===== -->
+    <div id="social" class="section">
+        <h2 style="margin-bottom: 25px;">Social Links Manager</h2>
+        
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
+                <i class="fas fa-link" style="font-size: 2rem; color: var(--primary);"></i>
+                <h3>Manage Your Social Media Links</h3>
+            </div>
+            
+            <div style="display: grid; gap: 20px;">
+                <!-- WhatsApp -->
+                <div style="background: #0f172a; padding: 20px; border-radius: 15px; border-left: 5px solid #25D366;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <i class="fab fa-whatsapp" style="font-size: 1.5rem; color: #25D366;"></i>
+                        <h4 style="color: #25D366;">WhatsApp</h4>
+                    </div>
+                    <input type="text" class="form-control" id="whatsappLink" placeholder="WhatsApp link (e.g., https://wa.me/923001234567)" style="margin-bottom: 10px;">
+                    <small style="color: var(--text-muted); display: block; margin-bottom: 10px;">Format: https://wa.me/923001234567</small>
+                    <button class="btn-sm btn-success" onclick="saveSocialLink('whatsapp')">Save WhatsApp</button>
+                </div>
+                
+                <!-- Telegram -->
+                <div style="background: #0f172a; padding: 20px; border-radius: 15px; border-left: 5px solid #0088cc;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <i class="fab fa-telegram" style="font-size: 1.5rem; color: #0088cc;"></i>
+                        <h4 style="color: #0088cc;">Telegram</h4>
+                    </div>
+                    <input type="text" class="form-control" id="telegramLink" placeholder="Telegram link (e.g., https://t.me/yourchannel)" style="margin-bottom: 10px;">
+                    <small style="color: var(--text-muted); display: block; margin-bottom: 10px;">Format: https://t.me/username</small>
+                    <button class="btn-sm btn-primary" onclick="saveSocialLink('telegram')">Save Telegram</button>
+                </div>
+                
+                <!-- YouTube -->
+                <div style="background: #0f172a; padding: 20px; border-radius: 15px; border-left: 5px solid #FF0000;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <i class="fab fa-youtube" style="font-size: 1.5rem; color: #FF0000;"></i>
+                        <h4 style="color: #FF0000;">YouTube</h4>
+                    </div>
+                    <input type="text" class="form-control" id="youtubeLink" placeholder="YouTube channel link" style="margin-bottom: 10px;">
+                    <small style="color: var(--text-muted); display: block; margin-bottom: 10px;">Format: https://youtube.com/c/channelname</small>
+                    <button class="btn-sm btn-danger" onclick="saveSocialLink('youtube')">Save YouTube</button>
+                </div>
+                
+                <!-- Instagram -->
+                <div style="background: #0f172a; padding: 20px; border-radius: 15px; border-left: 5px solid #E4405F;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <i class="fab fa-instagram" style="font-size: 1.5rem; color: #E4405F;"></i>
+                        <h4 style="color: #E4405F;">Instagram</h4>
+                    </div>
+                    <input type="text" class="form-control" id="instagramLink" placeholder="Instagram profile link" style="margin-bottom: 10px;">
+                    <small style="color: var(--text-muted); display: block; margin-bottom: 10px;">Format: https://instagram.com/username</small>
+                    <button class="btn-sm btn-warning" onclick="saveSocialLink('instagram')">Save Instagram</button>
+                </div>
+                
+                <!-- Facebook -->
+                <div style="background: #0f172a; padding: 20px; border-radius: 15px; border-left: 5px solid #1877F2;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <i class="fab fa-facebook" style="font-size: 1.5rem; color: #1877F2;"></i>
+                        <h4 style="color: #1877F2;">Facebook</h4>
+                    </div>
+                    <input type="text" class="form-control" id="facebookLink" placeholder="Facebook page link" style="margin-bottom: 10px;">
+                    <small style="color: var(--text-muted); display: block; margin-bottom: 10px;">Format: https://facebook.com/pagename</small>
+                    <button class="btn-sm btn-primary" onclick="saveSocialLink('facebook')">Save Facebook</button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #0f172a; border-radius: 15px;">
+                <h4 style="margin-bottom: 15px; color: var(--primary);">📌 Current Active Links</h4>
+                <div id="socialLinksPreview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SETTINGS SECTION ===== -->
+    <div id="settings" class="section">
+        <h2>Settings</h2>
+        
+        <div style="background: var(--card-bg); padding: 20px; border-radius: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span>Maintenance Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="maintenanceMode" onchange="toggleMaintenance()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== VERIFICATION LINKS MANAGER ===== -->
+<div id="verification" class="section">
+    <h2 style="margin-bottom: 25px;">🔗 Verification Links Manager</h2>
+    
+    <div style="background: var(--card-bg); padding: 30px; border-radius: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <!-- YouTube Subscribe -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-youtube" style="color: #FF0000; font-size: 1.5rem;"></i>
+                    <h4 style="color: #FF0000;">YouTube Subscribe</h4>
+                </div>
+                <input type="url" id="linkYoutube" class="form-control" placeholder="https://youtube.com/@channel">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will subscribe to this channel</small>
+            </div>
+            
+            <!-- YouTube Like -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-youtube" style="color: #FF0000; font-size: 1.5rem;"></i>
+                    <h4 style="color: #FF0000;">YouTube Video Like</h4>
+                </div>
+                <input type="url" id="linkYoutubeLike" class="form-control" placeholder="https://youtu.be/xxxx">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will like this video</small>
+            </div>
+            
+            <!-- Facebook Follow -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-facebook" style="color: #1877F2; font-size: 1.5rem;"></i>
+                    <h4 style="color: #1877F2;">Facebook Follow</h4>
+                </div>
+                <input type="url" id="linkFacebook" class="form-control" placeholder="https://facebook.com/page">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will follow this page</small>
+            </div>
+            
+            <!-- Facebook Like -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-facebook" style="color: #1877F2; font-size: 1.5rem;"></i>
+                    <h4 style="color: #1877F2;">Facebook Video Like</h4>
+                </div>
+                <input type="url" id="linkFacebookLike" class="form-control" placeholder="https://fb.com/video/xxx">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will like this video</small>
+            </div>
+            
+            <!-- Telegram Group -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-telegram" style="color: #0088cc; font-size: 1.5rem;"></i>
+                    <h4 style="color: #0088cc;">Telegram Group</h4>
+                </div>
+                <input type="url" id="linkTelegram" class="form-control" placeholder="https://t.me/group">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will join this group</small>
+            </div>
+            
+            <!-- WhatsApp Channel -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-whatsapp" style="color: #25D366; font-size: 1.5rem;"></i>
+                    <h4 style="color: #25D366;">WhatsApp Channel</h4>
+                </div>
+                <input type="url" id="linkWhatsapp" class="form-control" placeholder="https://whatsapp.com/channel/xxx">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will join this channel</small>
+            </div>
+            
+            <!-- TikTok Follow -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-tiktok" style="color: #000000; font-size: 1.5rem;"></i>
+                    <h4 style="color: #000000;">TikTok Follow</h4>
+                </div>
+                <input type="url" id="linkTiktok" class="form-control" placeholder="https://tiktok.com/@user">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will follow this account</small>
+            </div>
+            
+            <!-- TikTok Like -->
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <i class="fab fa-tiktok" style="color: #000000; font-size: 1.5rem;"></i>
+                    <h4 style="color: #000000;">TikTok Video Like</h4>
+                </div>
+                <input type="url" id="linkTiktokLike" class="form-control" placeholder="https://tiktok.com/video/xxx">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Users will like this video</small>
+            </div>
+        </div>
+        
+        <!-- Save Button -->
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <button class="btn btn-primary" onclick="saveVerificationLinks()" style="flex: 2; padding: 15px;">
+                <i class="fas fa-save"></i> Save All Links
+            </button>
+            <button class="btn btn-success" onclick="testVerificationLinks()" style="flex: 1; padding: 15px;">
+                <i class="fas fa-eye"></i> Test Links
+            </button>
+        </div>
+        
+        <!-- Preview Section -->
+        <div style="margin-top: 30px; background: #0f172a; padding: 20px; border-radius: 15px;">
+            <h4 style="margin-bottom: 15px;">👁️ Preview (How users will see)</h4>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                <div style="text-align: center; padding: 10px; background: #1e293b; border-radius: 10px;">
+                    <i class="fab fa-youtube" style="color: #FF0000; font-size: 2rem;"></i>
+                    <p style="margin-top: 5px; font-size: 0.8rem;">YouTube</p>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #1e293b; border-radius: 10px;">
+                    <i class="fab fa-facebook" style="color: #1877F2; font-size: 2rem;"></i>
+                    <p style="margin-top: 5px; font-size: 0.8rem;">Facebook</p>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #1e293b; border-radius: 10px;">
+                    <i class="fab fa-telegram" style="color: #0088cc; font-size: 2rem;"></i>
+                    <p style="margin-top: 5px; font-size: 0.8rem;">Telegram</p>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #1e293b; border-radius: 10px;">
+                    <i class="fab fa-whatsapp" style="color: #25D366; font-size: 2rem;"></i>
+                    <p style="margin-top: 5px; font-size: 0.8rem;">WhatsApp</p>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #1e293b; border-radius: 10px;">
+                    <i class="fab fa-tiktok" style="color: #000000; font-size: 2rem;"></i>
+                    <p style="margin-top: 5px; font-size: 0.8rem;">TikTok</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        <div style="margin-top: 30px; background: #0f172a; padding: 20px; border-radius: 15px;">
+            <h4 style="margin-bottom: 15px;">📊 Verification Statistics</h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div style="text-align: center;">
+                    <h3 id="totalVerifications">0</h3>
+                    <p style="color: var(--text-muted);">Total Verifications</p>
+                </div>
+                <div style="text-align: center;">
+                    <h3 id="todayVerifications">0</h3>
+                    <p style="color: var(--text-muted);">Today</p>
+                </div>
+                <div style="text-align: center;">
+                    <h3 id="successRate">0%</h3>
+                    <p style="color: var(--text-muted);">Success Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- ===== CUSTOMIZE THEME SECTION ===== -->
+    <div id="customize" class="section">
+        <h2 style="margin-bottom: 25px;">🎨 Customize Theme</h2>
+        
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px;">
+            <div style="margin-bottom: 30px;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">Primary Color</h3>
+                <div class="color-palette">
+                    <div class="color-option" style="background: #7c3aed;" onclick="changePrimaryColor('#7c3aed')"></div>
+                    <div class="color-option" style="background: #3b82f6;" onclick="changePrimaryColor('#3b82f6')"></div>
+                    <div class="color-option" style="background: #10b981;" onclick="changePrimaryColor('#10b981')"></div>
+                    <div class="color-option" style="background: #f59e0b;" onclick="changePrimaryColor('#f59e0b')"></div>
+                    <div class="color-option" style="background: #ef4444;" onclick="changePrimaryColor('#ef4444')"></div>
+                    <div class="color-option" style="background: #8b5cf6;" onclick="changePrimaryColor('#8b5cf6')"></div>
+                </div>
+                <input type="color" id="customPrimaryColor" style="width: 100%; margin-top: 10px;" onchange="changePrimaryColor(this.value)">
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+                <h3 style="color: var(--secondary); margin-bottom: 15px;">Secondary Color</h3>
+                <div class="color-palette">
+                    <div class="color-option" style="background: #db2777;" onclick="changeSecondaryColor('#db2777')"></div>
+                    <div class="color-option" style="background: #9333ea;" onclick="changeSecondaryColor('#9333ea')"></div>
+                    <div class="color-option" style="background: #0891b2;" onclick="changeSecondaryColor('#0891b2')"></div>
+                    <div class="color-option" style="background: #b45309;" onclick="changeSecondaryColor('#b45309')"></div>
+                    <div class="color-option" style="background: #b91c1c;" onclick="changeSecondaryColor('#b91c1c')"></div>
+                    <div class="color-option" style="background: #0d9488;" onclick="changeSecondaryColor('#0d9488')"></div>
+                </div>
+                <input type="color" id="customSecondaryColor" style="width: 100%; margin-top: 10px;" onchange="changeSecondaryColor(this.value)">
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px;">Background Style</h3>
+                <select class="form-control" id="bgStyle" onchange="changeBgStyle(this.value)">
+                    <option value="dark">🌙 Dark (Default)</option>
+                    <option value="light">☀️ Light</option>
+                    <option value="gradient1">🌈 Gradient Purple/Pink</option>
+                    <option value="gradient2">💙 Gradient Blue/Green</option>
+                    <option value="gradient3">🔥 Gradient Orange/Red</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px;">Font Style</h3>
+                <div class="font-preview" onclick="changeFont('Outfit')">
+                    <div style="width: 30px; height: 30px; background: var(--primary); border-radius: 8px;"></div>
+                    <div style="flex: 1;">
+                        <h4 style="font-family: 'Outfit';">Outfit Font</h4>
+                        <p style="font-family: 'Outfit';">The quick brown fox jumps over the lazy dog</p>
+                    </div>
+                </div>
+                <div class="font-preview" onclick="changeFont('Poppins')">
+                    <div style="width: 30px; height: 30px; background: var(--primary); border-radius: 8px;"></div>
+                    <div style="flex: 1;">
+                        <h4 style="font-family: 'Poppins';">Poppins Font</h4>
+                        <p style="font-family: 'Poppins';">The quick brown fox jumps over the lazy dog</p>
+                    </div>
+                </div>
+                <div class="font-preview" onclick="changeFont('Roboto')">
+                    <div style="width: 30px; height: 30px; background: var(--primary); border-radius: 8px;"></div>
+                    <div style="flex: 1;">
+                        <h4 style="font-family: 'Roboto';">Roboto Font</h4>
+                        <p style="font-family: 'Roboto';">The quick brown fox jumps over the lazy dog</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="saveThemeSettings()" style="width: 100%; padding: 15px;">
+                <i class="fas fa-save"></i> Save Theme Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== APP UPDATE NOTIFIER SECTION ===== -->
+    <div id="appupdates" class="section">
+        <h2 style="margin-bottom: 25px;">🔄 App Update Notifier</h2>
+        
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px;">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px;">Select App to Update</label>
+                <select id="updateAppSelect" class="form-control">
+                    <option value="">-- Select App --</option>
+                </select>
+            </div>
+            
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin: 20px 0;">
+                <h4 style="color: var(--warning); margin-bottom: 15px;">New Version Details</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>New Version Number</label>
+                    <input type="text" id="newVersion" class="form-control" placeholder="e.g., 2.0.0">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>What's New?</label>
+                    <textarea id="updateChanges" class="form-control" rows="4" placeholder="• Bug fixes\n• New features\n• Performance improvements"></textarea>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Update Type</label>
+                    <select id="updateType" class="form-control">
+                        <option value="optional">🟢 Optional Update</option>
+                        <option value="recommended">🟡 Recommended</option>
+                        <option value="forced">🔴 Forced Update</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Release Date</label>
+                    <input type="date" id="releaseDate" class="form-control">
+                </div>
+            </div>
+            
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin: 20px 0;">
+                <h4 style="color: var(--warning); margin-bottom: 15px;">Notification Settings</h4>
+                
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <span>Send Push Notification</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sendPushUpdate" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <span>Send Email to Users</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sendEmailUpdate">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <span>Show In-App Popup</span>
+                    <label class="switch">
+                        <input type="checkbox" id="showPopupUpdate" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-primary" onclick="sendUpdateNotification()" style="flex: 2;">
+                    <i class="fas fa-bell"></i> Send Update Notification
+                </button>
+                <button class="btn btn-warning" onclick="previewUpdate()" style="flex: 1;">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <h4 style="margin-bottom: 15px;">📋 Recent Updates</h4>
+                <div id="updateHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RECYCLE BIN SECTION ===== -->
+    <div id="recyclebin" class="section">
+        <h2 style="margin-bottom: 25px;">♻️ Recycle Bin</h2>
+        
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px;">
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="restoreAllApps()">
+                    <i class="fas fa-undo"></i> Restore All
+                </button>
+                <button class="btn btn-danger" onclick="emptyRecycleBin()">
+                    <i class="fas fa-trash"></i> Empty Recycle Bin
+                </button>
+            </div>
+            
+            <div id="deletedAppsList"></div>
+        </div>
+    </div>
+
+    <!-- ===== PUSH NOTIFICATION SECTION ===== -->
+    <div id="pushnotify" class="section">
+        <h2 style="margin-bottom: 25px;">🔔 Push Notifications (FCM)</h2>
+        
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px;">
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h4 style="color: var(--primary); margin-bottom: 15px;">⚙️ FCM Configuration</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Server Key</label>
+                    <input type="password" id="fcmServerKey" class="form-control" placeholder="AAAA...">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Sender ID</label>
+                    <input type="text" id="fcmSenderId" class="form-control" placeholder="123456789">
+                </div>
+            </div>
+            
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h4 style="color: var(--primary); margin-bottom: 15px;">🎯 Send To</h4>
+                
+                <select id="notificationTarget" class="form-control" style="margin-bottom: 15px;">
+                    <option value="all">📱 All Users</option>
+                    <option value="verified">✅ Verified Users Only</option>
+                    <option value="premium">💎 Premium Users</option>
+                    <option value="inactive">😴 Inactive Users (30+ days)</option>
+                    <option value="custom">🎯 Custom Topic</option>
+                </select>
+                
+                <div id="customTopicField" style="display: none;">
+                    <input type="text" class="form-control" placeholder="Enter topic name">
+                </div>
+            </div>
+            
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h4 style="color: var(--primary); margin-bottom: 15px;">📝 Notification Content</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Title</label>
+                    <input type="text" id="notifyTitle" class="form-control" placeholder="Notification title">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Message</label>
+                    <textarea id="notifyMessage" class="form-control" rows="4" placeholder="Your message here..."></textarea>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Image URL (Optional)</label>
+                    <input type="url" id="notifyImage" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Click Action (Optional)</label>
+                    <input type="text" id="notifyAction" class="form-control" placeholder="OPEN_APP / OPEN_URL">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Additional Data (JSON)</label>
+                    <textarea id="notifyData" class="form-control" rows="3" placeholder='{"key":"value"}'></textarea>
+                </div>
+            </div>
+            
+            <div class="notification-preview">
+                <h4 style="margin-bottom: 15px;">👁️ Preview</h4>
+                <div style="display: flex; align-items: center; gap: 15px; background: #0f172a; padding: 15px; border-radius: 10px;">
+                    <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-bell" style="color: white;"></i>
+                    </div>
+                    <div>
+                        <h4 id="previewTitle">Notification Title</h4>
+                        <p id="previewMessage" style="color: var(--text-muted);">Your message will appear here</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="sendPushNotification()" style="width: 100%; padding: 15px;">
+                <i class="fas fa-paper-plane"></i> Send Notification
+            </button>
+            
+            <div style="margin-top: 30px;">
+                <h4 style="margin-bottom: 15px;">📋 Recent Notifications</h4>
+                <div id="notificationHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== IP BAN SYSTEM SECTION ===== -->
+    <div id="ipban" class="section">
+        <h2 style="margin-bottom: 25px;">🚫 IP Ban System</h2>
+        
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px;">
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h4 style="color: var(--danger); margin-bottom: 15px;">Ban New IP</h4>
+                
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="banIP" class="form-control" placeholder="Enter IP address (e.g., 192.168.1.1)" style="flex: 2;">
+                    <input type="number" id="banDays" class="form-control" placeholder="Days" style="flex: 1;">
+                </div>
+                
+                <div style="margin-top: 10px;">
+                    <input type="text" id="banReason" class="form-control" placeholder="Ban reason">
+                </div>
+                
+                <button class="btn btn-danger" onclick="banIP()" style="margin-top: 15px; width: 100%;">
+                    <i class="fas fa-ban"></i> Ban This IP
+                </button>
+            </div>
+            
+            <div style="background: #0f172a; padding: 20px; border-radius: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h4 style="color: var(--danger);">🚫 Banned IPs</h4>
+                    <button class="btn btn-sm btn-danger" onclick="clearAllBans()">Clear All</button>
+                </div>
+                
+                <div id="bannedIPsList"></div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4 style="margin-bottom: 15px;">🔍 IP Lookup</h4>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="lookupIP" class="form-control" placeholder="Enter IP to check">
+                    <button class="btn btn-primary" onclick="lookupIP()">Check</button>
+                </div>
+                <div id="ipLookupResult" style="margin-top: 10px; padding: 15px; background: #0f172a; border-radius: 10px; display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+<script>
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyBAleTx5LoSz0kfuregZm3NNZFGmkn9XEY",
+        authDomain: "kamiappstorepro.firebaseapp.com",
+        databaseURL: "https://kamiappstorepro-default-rtdb.firebaseio.com",
+        projectId: "kamiappstorepro",
+        storageBucket: "kamiappstorepro.firebasestorage.app",
+        messagingSenderId: "692592410432",
+        appId: "1:692592410432:web:04abdbf4fcce0893b684a5"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    const rtdb = firebase.database();
+
+    // Global Variables
+    let selectedIconFile = null;
+    let screenshots = [null, null, null];
+    let currentChatUser = null;
+    let allApps = [];
+
+    // ===== TOGGLE SIDEBAR FUNCTION =====
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // Navigation
+    function changeSection(sectionId) {
+        document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 50 },
+                color: { value: "#7c3aed" },
+                shape: { type: "circle" },
+                opacity: { value: 0.3 },
+                size: { value: 3 },
+                move: { enable: true, speed: 1 }
+            }
+        });
+        
+        loadDashboardStats();
+        loadApps();
+        loadUsers();
+        loadPendingApprovals();
+        loadPayments();
+        loadReviews();
+        loadChatUsers();
+        loadCategories();
+        loadAds();
+        loadSocialLinks();
+        loadAppsForUpdate();
+        loadDeletedApps();
+        loadBannedIPs();
+        loadNotificationHistory();
+        loadVerificationLinks();
+        loadVerificationStats();
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('adminTheme');
+        if(savedTheme) {
+            const theme = JSON.parse(savedTheme);
+            document.documentElement.style.setProperty('--primary', theme.primary);
+            document.documentElement.style.setProperty('--secondary', theme.secondary);
+        }
+    });
+
+    // ===== DASHBOARD FUNCTIONS =====
+    function loadDashboardStats() {
+        // Total Users
+        db.collection('users').onSnapshot(snap => {
+            if(document.getElementById('totalUsers')) {
+                document.getElementById('totalUsers').textContent = snap.size;
+            }
+            
+            let verified = 0, banned = 0, premium = 0, newToday = 0;
+            const today = new Date().setHours(0,0,0,0);
+            
+            snap.forEach(doc => {
+                const user = doc.data();
+                if (user.isVerified) verified++;
+                if (user.isBanned) banned++;
+                if (user.isPremium) premium++;
+                if (user.createdAt > today) newToday++;
+            });
+            
+            // FIXED: Check if elements exist before setting textContent
+            if(document.getElementById('verifiedUsers')) {
+                document.getElementById('verifiedUsers').textContent = verified;
+            }
+            if(document.getElementById('bannedUsers')) {
+                document.getElementById('bannedUsers').textContent = banned;
+            }
+            if(document.getElementById('premiumUsers')) {
+                document.getElementById('premiumUsers').textContent = premium;
+            }
+            if(document.getElementById('newUsers')) {
+                document.getElementById('newUsers').textContent = newToday;
+            }
+            
+            // Also update user manager stats if they exist
+            if(document.getElementById('verifiedUsersStats')) {
+                document.getElementById('verifiedUsersStats').textContent = verified;
+            }
+            if(document.getElementById('bannedUsersStats')) {
+                document.getElementById('bannedUsersStats').textContent = banned;
+            }
+        });
+        
+        // Total Apps
+        db.collection('apps').onSnapshot(snap => {
+            if(document.getElementById('totalApps')) {
+                document.getElementById('totalApps').textContent = snap.size;
+            }
+            
+            let downloads = 0;
+            snap.forEach(doc => downloads += doc.data().downloads || 0);
+            if(document.getElementById('totalDownloads')) {
+                document.getElementById('totalDownloads').textContent = downloads;
+            }
+        });
+        
+        // Online Users
+        rtdb.ref('status').on('value', snap => {
+            let online = 0;
+            snap.forEach(x => { if(x.val().state === 'online') online++; });
+            if(document.getElementById('onlineUsers')) {
+                document.getElementById('onlineUsers').textContent = online;
+            }
+            if(document.getElementById('onlineNowStats')) {
+                document.getElementById('onlineNowStats').textContent = online;
+            }
+        });
+    }
+
+    // ===== UPLOAD FUNCTIONS =====
+    function togglePriceFields() {
+        const isPaid = document.getElementById('isPaid').checked;
+        document.getElementById('priceFields').style.display = isPaid ? 'block' : 'none';
+    }
+
+    function previewIcon(input) {
+        if (input.files && input.files[0]) {
+            selectedIconFile = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('iconPreview').src = e.target.result;
+                document.getElementById('iconPreview').style.display = 'block';
+                document.getElementById('iconPlaceholder').style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function previewScreenshot(input, index) {
+        if (input.files && input.files[0]) {
+            screenshots[index-1] = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById(`screenshotPreview${index}`);
+                preview.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('appName').value = '';
+        document.getElementById('appVersion').value = '';
+        document.getElementById('appDescription').value = '';
+        document.getElementById('appDownloadLink').value = '';
+        document.getElementById('appCategory').value = '';
+        document.getElementById('isPaid').checked = false;
+        document.getElementById('priceFields').style.display = 'none';
+        document.getElementById('appKey').value = '';
+        document.getElementById('appPrice').value = '';
+        document.getElementById('adminWhatsapp').value = '';
+        
+        // Reset icon preview
+        document.getElementById('iconPreview').style.display = 'none';
+        document.getElementById('iconPlaceholder').style.display = 'block';
+        selectedIconFile = null;
+        
+        // Reset screenshot previews
+        for (let i = 1; i <= 3; i++) {
+            document.getElementById(`screenshotPreview${i}`).innerHTML = '<i class="fas fa-camera" style="color: var(--text-muted); font-size: 2rem;"></i>';
+            screenshots[i-1] = null;
+        }
+    }
+
+    async function uploadApp() {
+        // Validation
+        if (!selectedIconFile) {
+            Swal.fire('Error', 'Please select app icon', 'error');
+            return;
+        }
+        
+        if (!screenshots[0] || !screenshots[1] || !screenshots[2]) {
+            Swal.fire('Error', 'Please select all 3 screenshots', 'error');
+            return;
+        }
+        
+        const appName = document.getElementById('appName').value;
+        const appVersion = document.getElementById('appVersion').value;
+        const appDescription = document.getElementById('appDescription').value;
+        const appDownloadLink = document.getElementById('appDownloadLink').value;
+        const appCategory = document.getElementById('appCategory').value;
+        
+        if (!appName || !appVersion || !appDescription || !appDownloadLink || !appCategory) {
+            Swal.fire('Error', 'Please fill all fields', 'error');
+            return;
+        }
+        
+        // Paid app validation
+        const isPaid = document.getElementById('isPaid').checked;
+        if (isPaid) {
+            const appKey = document.getElementById('appKey').value;
+            const appPrice = document.getElementById('appPrice').value;
+            const adminWhatsapp = document.getElementById('adminWhatsapp').value;
+            
+            if (!appKey || !appPrice || !adminWhatsapp) {
+                Swal.fire('Error', 'Please fill all paid app fields', 'error');
+                return;
+            }
+        }
+        
+        Swal.fire({
+            title: 'Uploading...',
+            text: 'Please wait',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        try {
+            // Upload icon
+            const iconRef = storage.ref(`apps/icons/${Date.now()}_icon`);
+            await iconRef.put(selectedIconFile);
+            const iconUrl = await iconRef.getDownloadURL();
+            
+            // Upload screenshots
+            const screenshotUrls = [];
+            for (let i = 0; i < 3; i++) {
+                const ssRef = storage.ref(`apps/screenshots/${Date.now()}_ss${i}`);
+                await ssRef.put(screenshots[i]);
+                screenshotUrls.push(await ssRef.getDownloadURL());
+            }
+            
+            // Prepare app data
+            const appData = {
+                name: appName,
+                version: appVersion,
+                description: appDescription,
+                downloadLink: appDownloadLink,
+                category: appCategory,
+                iconUrl: iconUrl,
+                screenshotUrls: screenshotUrls,
+                isPaid: isPaid,
+                downloads: 0,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Add paid app data if applicable
+            if (isPaid) {
+                appData.appKey = document.getElementById('appKey').value;
+                appData.price = document.getElementById('appPrice').value;
+                appData.adminWhatsapp = document.getElementById('adminWhatsapp').value;
+                appData.paidUsers = [];
+            }
+            
+            // Save to Firestore
+            await db.collection('apps').add(appData);
+            
+            Swal.fire('Success', 'App uploaded successfully!', 'success');
+            resetForm();
+            loadApps();
+            
+        } catch (error) {
+            console.error('Upload error:', error);
+            Swal.fire('Error', error.message, 'error');
+        }
+    }
+    
+    // ===== APP MANAGER FUNCTIONS =====
+    function loadApps() {
+        db.collection('apps').orderBy('timestamp', 'desc').onSnapshot(snap => {
+            const tbody = document.getElementById('appsTableBody');
+            tbody.innerHTML = '';
+            
+            snap.forEach(doc => {
+                const app = doc.data();
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${app.iconUrl}" style="width:40px; height:40px; border-radius:10px;"></td>
+                        <td>${app.name}</td>
+                        <td>${app.category}</td>
+                        <td>${app.version}</td>
+                        <td>${app.downloads || 0}</td>
+                        <td>${app.isPaid ? '💰 ' + app.price : 'Free'}</td>
+                        <td>
+                            <button class="btn-sm btn-danger" onclick="deleteApp('${doc.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+    }
+
+    function deleteApp(appId) {
+        Swal.fire({
+            title: 'Delete App?',
+            text: 'App will be moved to recycle bin',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Delete'
+        }).then(result => {
+            if (result.isConfirmed) {
+                // Get app data first
+                db.collection('apps').doc(appId).get().then(doc => {
+                    const appData = doc.data();
+                    
+                    // Add to deletedApps collection
+                    db.collection('deletedApps').add({
+                        ...appData,
+                        deletedAt: Date.now()
+                    });
+                    
+                    // Delete from apps collection
+                    db.collection('apps').doc(appId).delete();
+                    
+                    Swal.fire('Deleted!', 'App moved to recycle bin', 'success');
+                });
+            }
+        });
+    }
+
+    // ===== USER MANAGER FUNCTIONS =====
+    function loadUsers() {
+        db.collection('users').onSnapshot(snap => {
+            const tbody = document.getElementById('usersTableBody');
+            const countryFilter = document.getElementById('countryFilter');
+            const countries = new Set();
+            
+            tbody.innerHTML = '';
+            
+            let verified = 0, banned = 0, online = 0;
+            
+            snap.forEach(doc => {
+                const user = doc.data();
+                
+                // Count stats
+                if (user.isVerified) verified++;
+                if (user.isBanned) banned++;
+                if (user.online) online++;
+                if (user.country) countries.add(user.country);
+                
+                // Format IP for display
+                const ipDisplay = user.ip || 'N/A';
+                const ipClass = user.isBanned ? 'ip-banned' : 'ip-normal';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="${user.photo || 'https://via.placeholder.com/40'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <strong>${user.name || 'Unknown'}</strong>
+                                    <br><small style="color: var(--text-muted);">${user.email || 'No email'}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <small>📱 ${user.phone || 'N/A'}</small>
+                        </td>
+                        <td>
+                            <div style="background: #0f172a; padding: 5px 10px; border-radius: 5px; font-family: monospace;">
+                                <span class="${ipClass}">${ipDisplay}</span>
+                                <br>
+                                <small style="color: var(--text-muted);">${user.isp || ''}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span>${user.city || 'Unknown'}, ${user.country || 'Unknown'}</span>
+                                <br>
+                                <small style="color: var(--text-muted);">${user.countryCode || ''}</small>
+                            </div>
+                            <br>
+                            <small style="color: var(--text-muted);">
+                                🕒 ${user.lastSeen ? new Date(user.lastSeen.toDate()).toLocaleString() : 'Never'}
+                            </small>
+                        </td>
+                        <td>
+                            ${user.isBanned ? 
+                                '<span class="badge badge-danger">🚫 Banned</span>' : 
+                                '<span class="badge badge-success">✅ Active</span>'}
+                            ${user.isVerified ? '<span class="badge badge-primary">✓ Verified</span>' : ''}
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                <button class="btn-sm btn-primary" onclick="viewUserDetails('${doc.id}')" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                ${!user.isBanned ? 
+                                    `<button class="btn-sm btn-danger" onclick="banUserByIP('${user.ip}', '${doc.id}')" title="Ban IP">
+                                        <i class="fas fa-ban"></i> Ban IP
+                                    </button>` :
+                                    `<button class="btn-sm btn-success" onclick="unbanUserByIP('${user.ip}', '${doc.id}')" title="Unban IP">
+                                        <i class="fas fa-check"></i> Unban
+                                    </button>`
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            // Update stats
+            if(document.getElementById('verifiedUsersStats')) {
+                document.getElementById('verifiedUsersStats').textContent = verified;
+            }
+            if(document.getElementById('bannedUsersStats')) {
+                document.getElementById('bannedUsersStats').textContent = banned;
+            }
+            if(document.getElementById('onlineNowStats')) {
+                document.getElementById('onlineNowStats').textContent = online;
+            }
+            if(document.getElementById('uniqueCountriesStats')) {
+                document.getElementById('uniqueCountriesStats').textContent = countries.size;
+            }
+            if(document.getElementById('totalUsersStats')) {
+                document.getElementById('totalUsersStats').textContent = snap.size;
+            }
+            
+            // Update country filter
+            updateCountryFilter(Array.from(countries));
+        });
+    }
+
+    function updateCountryFilter(countries) {
+        const filter = document.getElementById('countryFilter');
+        const currentValue = filter.value;
+        
+        filter.innerHTML = '<option value="">All Countries</option>';
+        countries.sort().forEach(country => {
+            if (country && country !== 'Unknown') {
+                filter.innerHTML += `<option value="${country}">${country}</option>`;
+            }
+        });
+        
+        filter.value = currentValue;
+    }
+
+    function filterUsers() {
+        const searchTerm = document.getElementById('searchUser').value.toLowerCase();
+        const country = document.getElementById('countryFilter').value;
+        
+        const rows = document.querySelectorAll('#usersTableBody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const rowCountry = row.querySelector('td:nth-child(4)')?.textContent || '';
+            
+            const matchesSearch = !searchTerm || text.includes(searchTerm);
+            const matchesCountry = !country || rowCountry.includes(country);
+            
+            row.style.display = matchesSearch && matchesCountry ? '' : 'none';
+        });
+    }
+
+    // ===== PENDING APPROVALS FUNCTIONS =====
+    function loadPendingApprovals() {
+        db.collection('pending_apps').onSnapshot(snap => {
+            const list = document.getElementById('pendingList');
+            list.innerHTML = '';
+            document.getElementById('pendingBadge').textContent = snap.size;
+            
+            snap.forEach(doc => {
+                const app = doc.data();
+                list.innerHTML += `
+                    <div style="background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                        <h4>${app.name}</h4>
+                        <p>Uploader: ${app.uploaderName} | WhatsApp: ${app.contactWhatsapp}</p>
+                        <button class="btn-sm btn-success" onclick="approveApp('${doc.id}')">Approve</button>
+                        <button class="btn-sm btn-danger" onclick="rejectApp('${doc.id}')">Reject</button>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function approveApp(id) {
+        db.collection('pending_apps').doc(id).get().then(doc => {
+            const data = doc.data();
+            db.collection('apps').add({...data, downloads: 0});
+            db.collection('users').doc(data.uploaderId).update({isVerified: true});
+            db.collection('pending_apps').doc(id).delete();
+            Swal.fire('Approved!', 'App published', 'success');
+        });
+    }
+
+    function rejectApp(id) {
+        db.collection('pending_apps').doc(id).delete();
+    }
+
+    // ===== PAYMENTS FUNCTIONS =====
+    function loadPayments() {
+        db.collection('payments').orderBy('timestamp', 'desc').onSnapshot(snap => {
+            const list = document.getElementById('paymentsList');
+            list.innerHTML = '';
+            
+            snap.forEach(doc => {
+                const p = doc.data();
+                list.innerHTML += `
+                    <div style="background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                        <p>${p.userName} paid ${p.amount} PKR via ${p.method}</p>
+                        <button class="btn-sm btn-success" onclick="verifyPayment('${doc.id}')">Verify</button>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function verifyPayment(id) {
+        db.collection('payments').doc(id).update({ verified: true });
+    }
+
+    // ===== REVIEWS FUNCTIONS =====
+    function loadReviews() {
+        db.collection('reviews').orderBy('timestamp', 'desc').onSnapshot(snap => {
+            const list = document.getElementById('reviewsList');
+            list.innerHTML = '';
+            
+            snap.forEach(doc => {
+                const r = doc.data();
+                list.innerHTML += `
+                    <div style="background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                        <p>${'⭐'.repeat(r.rating)}</p>
+                        <p>${r.comment}</p>
+                        <button class="btn-sm btn-danger" onclick="deleteReview('${doc.id}')">Delete</button>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function deleteReview(id) {
+        db.collection('reviews').doc(id).delete();
+    }
+
+    // ===== CHAT FUNCTIONS =====
+    function loadChatUsers() {
+        db.collection('users').onSnapshot(snap => {
+            const list = document.getElementById('chatUsersList');
+            list.innerHTML = '';
+            
+            snap.forEach(doc => {
+                const user = doc.data();
+                list.innerHTML += `
+                    <div class="chat-user-item" onclick="selectChatUser('${doc.id}', '${user.name}')">
+                        <img src="${user.photo || 'https://via.placeholder.com/30'}" style="width:30px; height:30px; border-radius:50%;">
+                        <div>
+                            <div>${user.name}</div>
+                            <small style="color: var(--text-muted);">${user.isOnline ? 'Online' : 'Offline'}</small>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function selectChatUser(userId, userName) {
+        currentChatUser = userId;
+        document.getElementById('currentChatUser').textContent = userName;
+        
+        // Load messages
+        db.collection('chats').doc(userId).collection('messages')
+            .orderBy('timestamp').onSnapshot(snap => {
+                const messagesDiv = document.getElementById('chatMessages');
+                messagesDiv.innerHTML = '';
+                
+                snap.forEach(doc => {
+                    const msg = doc.data();
+                    const className = msg.sender === 'admin' ? 'sent' : 'received';
+                    messagesDiv.innerHTML += `
+                        <div class="message ${className}">
+                            ${msg.text}
+                            <br><small>${new Date(msg.timestamp).toLocaleTimeString()}</small>
+                        </div>
+                    `;
+                });
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+    }
+
+    function sendMessage() {
+        const msg = document.getElementById('chatInput').value;
+        if (!msg || !currentChatUser) return;
+        
+        db.collection('chats').doc(currentChatUser).collection('messages').add({
+            text: msg,
+            sender: 'admin',
+            timestamp: Date.now()
+        });
+        
+        document.getElementById('chatInput').value = '';
+    }
+
+    // ===== CATEGORIES FUNCTIONS =====
+    function loadCategories() {
+        db.collection('categories').onSnapshot(snap => {
+            const list = document.getElementById('categoriesList');
+            const catSelect = document.getElementById('appCategory');
+            list.innerHTML = '';
+            catSelect.innerHTML = '<option value="">Select Category</option>';
+            
+            snap.forEach(doc => {
+                const cat = doc.data().name;
+                catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+                list.innerHTML += `
+                    <span style="display:inline-block; background: var(--card-bg); padding: 5px 10px; border-radius: 5px; margin: 2px;">
+                        ${cat}
+                        <i class="fas fa-times" style="color: red; cursor: pointer;" onclick="deleteCategory('${doc.id}')"></i>
+                    </span>
+                `;
+            });
+        });
+    }
+
+    function addCategory() {
+        const name = document.getElementById('newCategory').value;
+        if (name) {
+            db.collection('categories').add({ name: name });
+            document.getElementById('newCategory').value = '';
+        }
+    }
+
+    function deleteCategory(id) {
+        db.collection('categories').doc(id).delete();
+    }
+
+    // ===== ADS FUNCTIONS =====
+    function loadAds() {
+        db.collection('settings').doc('ads').get().then(doc => {
+            if (doc.exists) {
+                document.getElementById('adStatus').value = doc.data().status || 'off';
+                document.getElementById('adCode').value = doc.data().code || '';
+            }
+        });
+    }
+
+    function saveAds() {
+        db.collection('settings').doc('ads').set({
+            status: document.getElementById('adStatus').value,
+            code: document.getElementById('adCode').value
+        });
+        Swal.fire('Saved', 'Ad settings updated', 'success');
+    }
+
+    // ===== MAINTENANCE FUNCTIONS =====
+    function toggleMaintenance() {
+        const status = document.getElementById('maintenanceMode').checked;
+        rtdb.ref('settings/config').update({ maintenance: status });
+    }
+
+     // ============================================
+    // 🔗 VERIFICATION LINKS FUNCTIONS
+   // ============================================
+
+     // Load verification links on page load
+     function loadVerificationLinks() {
+       db.collection('settings').doc('verification').get().then(doc => {
+        if (doc.exists) {
+            const links = doc.data();
+            document.getElementById('linkYoutube').value = links.youtube || '';
+            document.getElementById('linkYoutubeLike').value = links.youtubeLike || '';
+            document.getElementById('linkFacebook').value = links.facebook || '';
+            document.getElementById('linkFacebookLike').value = links.facebookLike || '';
+            document.getElementById('linkTelegram').value = links.telegram || '';
+            document.getElementById('linkWhatsapp').value = links.whatsapp || '';
+            document.getElementById('linkTiktok').value = links.tiktok || '';
+            document.getElementById('linkTiktokLike').value = links.tiktokLike || '';
+        }
+    }).catch(error => {
+        console.error('Error loading verification links:', error);
+    });
+}
+
+   // Save verification links
+   function saveVerificationLinks() {
+    // Get all link values
+    const links = {
+        youtube: document.getElementById('linkYoutube').value.trim(),
+        youtubeLike: document.getElementById('linkYoutubeLike').value.trim(),
+        facebook: document.getElementById('linkFacebook').value.trim(),
+        facebookLike: document.getElementById('linkFacebookLike').value.trim(),
+        telegram: document.getElementById('linkTelegram').value.trim(),
+        whatsapp: document.getElementById('linkWhatsapp').value.trim(),
+        tiktok: document.getElementById('linkTiktok').value.trim(),
+        tiktokLike: document.getElementById('linkTiktokLike').value.trim()
+    };
+    
+    // Validate URLs (optional but recommended)
+    let invalidUrls = [];
+    for (let [key, value] of Object.entries(links)) {
+        if (value && !isValidUrl(value)) {
+            invalidUrls.push(key);
+        }
+    }
+    
+    if (invalidUrls.length > 0) {
+        Swal.fire({
+            title: 'Invalid URLs',
+            html: `Please check these fields: ${invalidUrls.join(', ')}`,
+            icon: 'warning'
+        });
+        return;
+    }
+    
+    // Show loading
+    Swal.fire({
+        title: 'Saving...',
+        text: 'Please wait',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Save to Firebase
+    db.collection('settings').doc('verification').set(links, { merge: true })
+        .then(() => {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Verification links saved successfully',
+                icon: 'success',
+                timer: 2000
+            });
+            
+            // Load statistics after save
+            loadVerificationStats();
+        })
+        .catch(error => {
+            Swal.fire({
+                title: 'Error',
+                text: error.message,
+                icon: 'error'
+            });
+        });
+}
+
+    // Test verification links
+     function testVerificationLinks() {
+     const links = {
+        youtube: document.getElementById('linkYoutube').value,
+        youtubeLike: document.getElementById('linkYoutubeLike').value,
+        facebook: document.getElementById('linkFacebook').value,
+        facebookLike: document.getElementById('linkFacebookLike').value,
+        telegram: document.getElementById('linkTelegram').value,
+        whatsapp: document.getElementById('linkWhatsapp').value,
+        tiktok: document.getElementById('linkTiktok').value,
+        tiktokLike: document.getElementById('linkTiktokLike').value
+    };
+    
+    let workingCount = 0;
+    let totalCount = 0;
+    
+    for (let [key, value] of Object.entries(links)) {
+        if (value) {
+            totalCount++;
+            // Just check if it's a valid URL
+            if (isValidUrl(value)) {
+                workingCount++;
+            }
+        }
+    }
+    
+    Swal.fire({
+        title: 'Link Test Results',
+        html: `
+            <p>Total Links: ${totalCount}</p>
+            <p>Valid Links: ${workingCount}</p>
+            <p>Invalid Links: ${totalCount - workingCount}</p>
+            <hr>
+            <p style="color: ${workingCount === totalCount ? 'green' : 'orange'};">
+                ${workingCount === totalCount ? '✅ All links are valid!' : '⚠️ Some links need attention'}
+            </p>
+        `,
+        icon: workingCount === totalCount ? 'success' : 'warning'
+    });
+}
+
+    // Load verification statistics
+    function loadVerificationStats() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Get total verifications
+    db.collection('verification_logs').get().then(snap => {
+        document.getElementById('totalVerifications').textContent = snap.size;
+        
+        // Get today's verifications
+        db.collection('verification_logs')
+            .where('timestamp', '>', today)
+            .get()
+            .then(todaySnap => {
+                document.getElementById('todayVerifications').textContent = todaySnap.size;
+                
+                // Calculate success rate
+                if (snap.size > 0) {
+                    const starts = snap.docs.filter(d => d.data().action === 'start').length;
+                    const completes = snap.docs.filter(d => d.data().action === 'complete').length;
+                    const rate = starts > 0 ? ((completes / starts) * 100).toFixed(1) : 0;
+                    document.getElementById('successRate').textContent = rate + '%';
+                }
+            });
+    });
+}
+
+    // Validate URL helper
+    function isValidUrl(string) {
+    if (!string) return true; // Empty is allowed
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+    // Reset all links
+    function resetVerificationLinks() {
+    Swal.fire({
+        title: 'Reset All Links?',
+        text: 'This will clear all verification links',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Yes, reset'
+    }).then(result => {
+        if (result.isConfirmed) {
+            document.getElementById('linkYoutube').value = '';
+            document.getElementById('linkYoutubeLike').value = '';
+            document.getElementById('linkFacebook').value = '';
+            document.getElementById('linkFacebookLike').value = '';
+            document.getElementById('linkTelegram').value = '';
+            document.getElementById('linkWhatsapp').value = '';
+            document.getElementById('linkTiktok').value = '';
+            document.getElementById('linkTiktokLike').value = '';
+            
+            Swal.fire('Reset', 'All links cleared', 'success');
+        }
+    });
+}
+
+// Export links as JSON
+function exportVerificationLinks() {
+    const links = {
+        youtube: document.getElementById('linkYoutube').value,
+        youtubeLike: document.getElementById('linkYoutubeLike').value,
+        facebook: document.getElementById('linkFacebook').value,
+        facebookLike: document.getElementById('linkFacebookLike').value,
+        telegram: document.getElementById('linkTelegram').value,
+        whatsapp: document.getElementById('linkWhatsapp').value,
+        tiktok: document.getElementById('linkTiktok').value,
+        tiktokLike: document.getElementById('linkTiktokLike').value,
+        exportedAt: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(links, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `verification_links_${Date.now()}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+   // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+    loadVerificationLinks();
+    loadVerificationStats();
+});
+
+    // ===== SOCIAL LINKS FUNCTIONS =====
+    function loadSocialLinks() {
+        db.collection('settings').doc('social').get().then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById('whatsappLink').value = data.whatsapp || '';
+                document.getElementById('telegramLink').value = data.telegram || '';
+                document.getElementById('youtubeLink').value = data.youtube || '';
+                document.getElementById('instagramLink').value = data.instagram || '';
+                document.getElementById('facebookLink').value = data.facebook || '';
+                
+                // Show preview
+                updateSocialPreview(data);
+            }
+        });
+    }
+
+    function saveSocialLink(platform) {
+        let value = '';
+        
+        switch(platform) {
+            case 'whatsapp':
+                value = document.getElementById('whatsappLink').value;
+                break;
+            case 'telegram':
+                value = document.getElementById('telegramLink').value;
+                break;
+            case 'youtube':
+                value = document.getElementById('youtubeLink').value;
+                break;
+            case 'instagram':
+                value = document.getElementById('instagramLink').value;
+                break;
+            case 'facebook':
+                value = document.getElementById('facebookLink').value;
+                break;
+        }
+        
+        if (!value) {
+            Swal.fire('Error', 'Please enter a link', 'error');
+            return;
+        }
+        
+        // Validate URL
+        if (!value.startsWith('http://') && !value.startsWith('https://')) {
+            Swal.fire('Error', 'Link must start with http:// or https://', 'error');
+            return;
+        }
+        
+        // Get current social links
+        db.collection('settings').doc('social').get().then(doc => {
+            let socialData = {};
+            if (doc.exists) {
+                socialData = doc.data();
+            }
+            
+            // Update the specific platform
+            socialData[platform] = value;
+            
+            // Save to Firebase
+            db.collection('settings').doc('social').set(socialData, { merge: true })
+                .then(() => {
+                    Swal.fire('Success', `${platform} link saved successfully!`, 'success');
+                    updateSocialPreview(socialData);
+                })
+                .catch(error => {
+                    Swal.fire('Error', error.message, 'error');
+                });
+        });
+    }
+
+    function updateSocialPreview(data) {
+        const preview = document.getElementById('socialLinksPreview');
+        preview.innerHTML = '';
+        
+        const platforms = [
+            { name: 'whatsapp', icon: 'fab fa-whatsapp', color: '#25D366' },
+            { name: 'telegram', icon: 'fab fa-telegram', color: '#0088cc' },
+            { name: 'youtube', icon: 'fab fa-youtube', color: '#FF0000' },
+            { name: 'instagram', icon: 'fab fa-instagram', color: '#E4405F' },
+            { name: 'facebook', icon: 'fab fa-facebook', color: '#1877F2' }
+        ];
+        
+        platforms.forEach(p => {
+            if (data[p.name]) {
+                preview.innerHTML += `
+                    <div style="background: var(--card-bg); padding: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="${p.icon}" style="color: ${p.color};"></i>
+                        <div style="flex: 1;">
+                            <small>${p.name}</small><br>
+                            <small style="color: var(--text-muted);">Active</small>
+                        </div>
+                        <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    </div>
+                `;
+            } else {
+                preview.innerHTML += `
+                    <div style="background: #0f172a; padding: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px; opacity: 0.5;">
+                        <i class="${p.icon}" style="color: ${p.color};"></i>
+                        <div style="flex: 1;">
+                            <small>${p.name}</small><br>
+                            <small style="color: var(--text-muted);">Not set</small>
+                        </div>
+                        <i class="fas fa-times-circle" style="color: var(--danger);"></i>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    // ===== CUSTOMIZATION FUNCTIONS =====
+    function changePrimaryColor(color) {
+        document.documentElement.style.setProperty('--primary', color);
+        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+        if(event.target && event.target.classList) {
+            event.target.classList.add('active');
+        }
+    }
+
+    function changeSecondaryColor(color) {
+        document.documentElement.style.setProperty('--secondary', color);
+    }
+
+    function changeBgStyle(style) {
+        const root = document.documentElement;
+        switch(style) {
+            case 'dark':
+                root.style.setProperty('--bg-dark', '#0f172a');
+                root.style.setProperty('--card-bg', '#1e293b');
+                root.style.setProperty('--text-main', '#f1f5f9');
+                break;
+            case 'light':
+                root.style.setProperty('--bg-dark', '#f1f5f9');
+                root.style.setProperty('--card-bg', '#ffffff');
+                root.style.setProperty('--text-main', '#0f172a');
+                break;
+            case 'gradient1':
+                root.style.setProperty('--bg-dark', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                break;
+            case 'gradient2':
+                root.style.setProperty('--bg-dark', 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)');
+                break;
+            case 'gradient3':
+                root.style.setProperty('--bg-dark', 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)');
+                break;
+        }
+    }
+
+    function changeFont(font) {
+        document.documentElement.style.setProperty('font-family', `'${font}', sans-serif`);
+    }
+
+    function saveThemeSettings() {
+        const settings = {
+            primary: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+            secondary: getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim(),
+            bgStyle: document.getElementById('bgStyle').value
+        };
+        
+        localStorage.setItem('adminTheme', JSON.stringify(settings));
+        Swal.fire('Success', 'Theme settings saved!', 'success');
+    }
+
+    // ===== APP UPDATE NOTIFIER FUNCTIONS =====
+    function loadAppsForUpdate() {
+        db.collection('apps').get().then(snap => {
+            const select = document.getElementById('updateAppSelect');
+            select.innerHTML = '<option value="">-- Select App --</option>';
+            snap.forEach(doc => {
+                const app = doc.data();
+                select.innerHTML += `<option value="${doc.id}">${app.name} (v${app.version})</option>`;
+            });
+        });
+    }
+
+    function previewUpdate() {
+        const appId = document.getElementById('updateAppSelect').value;
+        const newVersion = document.getElementById('newVersion').value;
+        const changes = document.getElementById('updateChanges').value;
+        
+        if(!appId || !newVersion) {
+            Swal.fire('Error', 'Select app and enter version', 'error');
+            return;
+        }
+        
+        Swal.fire({
+            title: 'Update Preview',
+            html: `
+                <div style="text-align: left;">
+                    <p><strong>New Version:</strong> ${newVersion}</p>
+                    <p><strong>Changes:</strong> ${changes}</p>
+                    <p><strong>Type:</strong> ${document.getElementById('updateType').value}</p>
+                </div>
+            `
+        });
+    }
+
+    function sendUpdateNotification() {
+        const appId = document.getElementById('updateAppSelect').value;
+        const newVersion = document.getElementById('newVersion').value;
+        const changes = document.getElementById('updateChanges').value;
+        const updateType = document.getElementById('updateType').value;
+        
+        if(!appId || !newVersion || !changes) {
+            Swal.fire('Error', 'Fill all fields', 'error');
+            return;
+        }
+        
+        // Get app name
+        db.collection('apps').doc(appId).get().then(doc => {
+            const appName = doc.data().name;
+            
+            // Save update to database
+            db.collection('appUpdates').add({
+                appId: appId,
+                appName: appName,
+                newVersion: newVersion,
+                changes: changes,
+                updateType: updateType,
+                releaseDate: document.getElementById('releaseDate').value,
+                sentAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Send push if enabled
+            if(document.getElementById('sendPushUpdate').checked) {
+                // This would integrate with FCM
+                console.log('Push notification sent for', appName);
+            }
+            
+            Swal.fire('Success', 'Update notification sent!', 'success');
+        });
+    }
+
+    // ===== RECYCLE BIN FUNCTIONS =====
+    function loadDeletedApps() {
+        db.collection('deletedApps').orderBy('deletedAt', 'desc').onSnapshot(snap => {
+            const list = document.getElementById('deletedAppsList');
+            const badge = document.getElementById('recycleBadge');
+            list.innerHTML = '';
+            badge.textContent = snap.size;
+            
+            if(snap.empty) {
+                list.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Recycle bin is empty</p>';
+                return;
+            }
+            
+            snap.forEach(doc => {
+                const app = doc.data();
+                list.innerHTML += `
+                    <div class="recycle-item">
+                        <img src="${app.iconUrl || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">
+                        <div style="flex: 1;">
+                            <h4>${app.name}</h4>
+                            <p style="color: var(--text-muted);">Deleted: ${new Date(app.deletedAt).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <button class="btn-sm btn-success" onclick="restoreApp('${doc.id}')">Restore</button>
+                            <button class="btn-sm btn-danger" onclick="permanentDelete('${doc.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function restoreApp(docId) {
+        db.collection('deletedApps').doc(docId).get().then(doc => {
+            const appData = doc.data();
+            delete appData.deletedAt;
+            db.collection('apps').add(appData);
+            db.collection('deletedApps').doc(docId).delete();
+            Swal.fire('Restored!', 'App restored successfully', 'success');
+        });
+    }
+
+    function restoreAllApps() {
+        Swal.fire({
+            title: 'Restore All?',
+            text: 'All deleted apps will be restored',
+            icon: 'warning',
+            showCancelButton: true
+        }).then(result => {
+            if(result.isConfirmed) {
+                db.collection('deletedApps').get().then(snap => {
+                    snap.forEach(doc => {
+                        const appData = doc.data();
+                        delete appData.deletedAt;
+                        db.collection('apps').add(appData);
+                        doc.ref.delete();
+                    });
+                });
+                Swal.fire('Restored!', 'All apps restored', 'success');
+            }
+        });
+    }
+
+    function emptyRecycleBin() {
+        Swal.fire({
+            title: 'Empty Recycle Bin?',
+            text: 'All apps will be permanently deleted!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444'
+        }).then(result => {
+            if(result.isConfirmed) {
+                db.collection('deletedApps').get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                });
+                Swal.fire('Emptied!', 'Recycle bin cleared', 'success');
+            }
+        });
+    }
+
+    function permanentDelete(docId) {
+        db.collection('deletedApps').doc(docId).delete();
+    }
+
+    // ===== PUSH NOTIFICATION FUNCTIONS =====
+    function sendPushNotification() {
+        const title = document.getElementById('notifyTitle').value;
+        const message = document.getElementById('notifyMessage').value;
+        const target = document.getElementById('notificationTarget').value;
+        
+        if(!title || !message) {
+            Swal.fire('Error', 'Enter title and message', 'error');
+            return;
+        }
+        
+        const notification = {
+            title: title,
+            body: message,
+            image: document.getElementById('notifyImage').value,
+            click_action: document.getElementById('notifyAction').value,
+            data: document.getElementById('notifyData').value ? JSON.parse(document.getElementById('notifyData').value) : {}
+        };
+        
+        // Save to history
+        db.collection('notifications').add({
+            title: title,
+            message: message,
+            target: target,
+            sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+            success: true
+        });
+        
+        Swal.fire('Success', 'Notification sent!', 'success');
+        
+        // Update preview
+        document.getElementById('previewTitle').textContent = title;
+        document.getElementById('previewMessage').textContent = message;
+    }
+
+    function loadNotificationHistory() {
+        db.collection('notifications').orderBy('sentAt', 'desc').limit(10).onSnapshot(snap => {
+            const history = document.getElementById('notificationHistory');
+            history.innerHTML = '';
+            
+            snap.forEach(doc => {
+                const n = doc.data();
+                history.innerHTML += `
+                    <div style="background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 5px;">
+                        <small>${n.sentAt ? new Date(n.sentAt.toDate()).toLocaleString() : 'Just now'}</small>
+                        <p><strong>${n.title}</strong> - ${n.message}</p>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    // ===== IP BAN SYSTEM FUNCTIONS =====
+    function banIP() {
+        const ip = document.getElementById('banIP').value;
+        const days = document.getElementById('banDays').value;
+        const reason = document.getElementById('banReason').value;
+        
+        if(!ip || !days || !reason) {
+            Swal.fire('Error', 'Fill all fields', 'error');
+            return;
+        }
+        
+        const until = days == 0 ? 'permanent' : Date.now() + (days * 24 * 60 * 60 * 1000);
+        
+        db.collection('bannedIPs').doc(ip.replace(/\./g, '_')).set({
+            ip: ip,
+            bannedAt: Date.now(),
+            bannedUntil: until,
+            reason: reason,
+            bannedBy: 'admin'
+        });
+        
+        document.getElementById('banIP').value = '';
+        document.getElementById('banDays').value = '';
+        document.getElementById('banReason').value = '';
+        
+        Swal.fire('Banned!', `IP ${ip} has been banned`, 'success');
+    }
+
+    function loadBannedIPs() {
+        db.collection('bannedIPs').orderBy('bannedAt', 'desc').onSnapshot(snap => {
+            const list = document.getElementById('bannedIPsList');
+            const badge = document.getElementById('ipBanBadge');
+            list.innerHTML = '';
+            badge.textContent = snap.size;
+            
+            snap.forEach(doc => {
+                const ban = doc.data();
+                const remaining = ban.bannedUntil === 'permanent' ? 'Permanent' : 
+                    Math.ceil((ban.bannedUntil - Date.now()) / (24*60*60*1000)) + ' days left';
+                
+                list.innerHTML += `
+                    <div class="ip-item">
+                        <div>
+                            <strong>${ban.ip}</strong>
+                            <p style="color: var(--text-muted);">${ban.reason}</p>
+                            <small>${remaining}</small>
+                        </div>
+                        <button class="btn-sm btn-success" onclick="unbanIP('${doc.id}')">Unban</button>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function unbanIP(docId) {
+        db.collection('bannedIPs').doc(docId).delete();
+    }
+
+    function clearAllBans() {
+        Swal.fire({
+            title: 'Clear all bans?',
+            text: 'All IPs will be unbanned',
+            icon: 'warning',
+            showCancelButton: true
+        }).then(result => {
+            if(result.isConfirmed) {
+                db.collection('bannedIPs').get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                });
+            }
+        });
+    }
+
+    function lookupIP() {
+        const ip = document.getElementById('lookupIP').value;
+        if(!ip) return;
+        
+        fetch(`https://ipapi.co/${ip}/json/`).then(res => res.json()).then(data => {
+            const result = document.getElementById('ipLookupResult');
+            result.style.display = 'block';
+            result.innerHTML = `
+                <p><strong>IP:</strong> ${data.ip}</p>
+                <p><strong>Location:</strong> ${data.city || 'Unknown'}, ${data.country_name || 'Unknown'}</p>
+                <p><strong>ISP:</strong> ${data.org || 'Unknown'}</p>
+                <p><strong>Timezone:</strong> ${data.timezone || 'Unknown'}</p>
+            `;
+        }).catch(err => {
+            Swal.fire('Error', 'Could not lookup IP', 'error');
+        });
+    }
+
+    // ===== USER DETAILS FUNCTIONS =====
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function viewUserDetails(userId) {
+        db.collection('users').doc(userId).get().then(doc => {
+            const user = doc.data();
+            
+            const content = `
+                <div style="padding: 20px;">
+                    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                        <img src="${user.photo || 'https://via.placeholder.com/80'}" style="width: 80px; height: 80px; border-radius: 50%;">
+                        <div>
+                            <h2>${user.name}</h2>
+                            <p>${user.email}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <h4 style="color: var(--primary); margin-bottom: 15px;">🌐 NETWORK INFORMATION</h4>
+                        <table style="width: 100%;">
+                            <tr><td><strong>IP Address:</strong></td><td>${user.ip || 'N/A'}</td></tr>
+                            <tr><td><strong>Country:</strong></td><td>${user.country || 'N/A'} (${user.countryCode || 'N/A'})</td></tr>
+                            <tr><td><strong>City:</strong></td><td>${user.city || 'N/A'}</td></tr>
+                            <tr><td><strong>Region:</strong></td><td>${user.region || 'N/A'}</td></tr>
+                            <tr><td><strong>ISP:</strong></td><td>${user.isp || 'N/A'}</td></tr>
+                            <tr><td><strong>Coordinates:</strong></td><td>${user.latitude || 'N/A'}, ${user.longitude || 'N/A'}</td></tr>
+                            <tr><td><strong>Timezone:</strong></td><td>${user.timezone || 'N/A'}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div style="background: #0f172a; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <h4 style="color: var(--primary); margin-bottom: 15px;">📱 DEVICE INFORMATION</h4>
+                        <table style="width: 100%;">
+                            <tr><td><strong>Platform:</strong></td><td>${user.platform || 'N/A'}</td></tr>
+                            <tr><td><strong>Browser:</strong></td><td>${user.userAgent ? user.userAgent.substring(0, 50) + '...' : 'N/A'}</td></tr>
+                            <tr><td><strong>Language:</strong></td><td>${user.language || 'N/A'}</td></tr>
+                            <tr><td><strong>Last Seen:</strong></td><td>${user.lastSeen ? new Date(user.lastSeen.toDate()).toLocaleString() : 'N/A'}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        ${!user.isBanned ? 
+                            `<button class="btn btn-danger" onclick="banUserByIP('${user.ip}', '${userId}')">
+                                <i class="fas fa-ban"></i> Ban This IP
+                            </button>` :
+                            `<button class="btn btn-success" onclick="unbanUserByIP('${user.ip}', '${userId}')">
+                                <i class="fas fa-check"></i> Unban IP
+                            </button>`
+                        }
+                        <button class="btn btn-primary" onclick="showIPHistory('${user.ip}')">
+                            <i class="fas fa-history"></i> IP History
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('userDetailsContent').innerHTML = content;
+            openModal('userDetailsModal');
+        });
+    }
+
+    // Ban user by IP
+    function banUserByIP(ip, userId) {
+        if (!ip || ip === 'N/A') {
+            Swal.fire('Error', 'No IP address available for this user', 'error');
+            return;
+        }
+        
+        Swal.fire({
+            title: 'Ban IP Address?',
+            html: `
+                <p><strong>IP:</strong> ${ip}</p>
+                <input type="number" id="banDays" class="swal2-input" placeholder="Days (0 for permanent)" value="30">
+                <input type="text" id="banReason" class="swal2-input" placeholder="Reason for ban">
+            `,
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Ban IP',
+            preConfirm: () => {
+                const days = document.getElementById('banDays').value;
+                const reason = document.getElementById('banReason').value;
+                
+                if (!reason) {
+                    Swal.showValidationMessage('Please enter a reason');
+                    return false;
+                }
+                
+                return { days, reason };
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                const { days, reason } = result.value;
+                
+                // Ban the IP
+                const bannedUntil = days == 0 ? 'permanent' : Date.now() + (days * 24 * 60 * 60 * 1000);
+                
+                db.collection('bannedIPs').doc(ip.replace(/\./g, '_')).set({
+                    ip: ip,
+                    bannedAt: Date.now(),
+                    bannedUntil: bannedUntil,
+                    reason: reason,
+                    bannedBy: 'admin',
+                    userId: userId
+                }).then(() => {
+                    // Update user status
+                    db.collection('users').doc(userId).update({
+                        isBanned: true,
+                        banReason: reason,
+                        bannedUntil: bannedUntil
+                    });
+                    
+                    Swal.fire('Banned!', `IP ${ip} has been banned`, 'success');
+                    closeModal('userDetailsModal');
+                });
+            }
+        });
+    }
+
+    // Unban user by IP
+    function unbanUserByIP(ip, userId) {
+        if (!ip || ip === 'N/A') return;
+        
+        Swal.fire({
+            title: 'Unban IP?',
+            text: `Remove ban from IP ${ip}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            confirmButtonText: 'Yes, unban'
+        }).then(result => {
+            if (result.isConfirmed) {
+                // Remove from bannedIPs
+                db.collection('bannedIPs').doc(ip.replace(/\./g, '_')).delete();
+                
+                // Update user status
+                db.collection('users').doc(userId).update({
+                    isBanned: false,
+                    banReason: null,
+                    bannedUntil: null
+                });
+                
+                Swal.fire('Unbanned!', `IP ${ip} has been unbanned`, 'success');
+                closeModal('userDetailsModal');
+            }
+        });
+    }
+
+    // Show IP history
+    function showIPHistory(ip) {
+        if (!ip || ip === 'N/A') {
+            Swal.fire('Info', 'No IP history available', 'info');
+            return;
+        }
+        
+        db.collection('userSessions')
+            .where('ip', '==', ip)
+            .orderBy('loginTime', 'desc')
+            .limit(10)
+            .get()
+            .then(snap => {
+                let history = '<div style="max-height: 300px; overflow-y: auto;">';
+                
+                if(snap.empty) {
+                    history += '<p>No history found</p>';
+                } else {
+                    snap.forEach(doc => {
+                        const session = doc.data();
+                        history += `
+                            <div style="background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 5px;">
+                                <small>${session.loginTime ? new Date(session.loginTime.toDate()).toLocaleString() : 'Unknown'}</small><br>
+                                <strong>${session.userName || 'Unknown'}</strong> (${session.userEmail || 'No email'})<br>
+                                <small>${session.city || 'Unknown'}, ${session.country || 'Unknown'}</small>
+                            </div>
+                        `;
+                    });
+                }
+                
+                history += '</div>';
+                
+                Swal.fire({
+                    title: '📋 IP History',
+                    html: history,
+                    width: 600
+                });
+            });
+    }
+</script>
+
+</body>
+</html>
